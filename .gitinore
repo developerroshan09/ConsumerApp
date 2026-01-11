@@ -1,0 +1,29 @@
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcuserstate
+*.xcworkspace
+
+# Build
+build/
+*.ipa
+*.dSYM.zip
+
+# Swift Package Manager
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods
+Pods/
+
+# Firebase - Keep this secret!
+GoogleService-Info.plist
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
