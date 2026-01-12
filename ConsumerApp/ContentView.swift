@@ -23,7 +23,7 @@ struct ContentView: View {
                     Task {
                         await viewModel.logout()
                     }
-                }
+                }, viewModel: viewModel
             )
             
         default:

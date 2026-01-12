@@ -11,6 +11,8 @@ struct HomeScreen: View {
     let email: String
     let onLogout: () -> Void
     
+    @ObservedObject var viewModel: AuthViewModel
+    
     var body: some View {
         VStack(spacing: 24) {
             Text("Welcome")
@@ -21,5 +23,6 @@ struct HomeScreen: View {
             
             Button("Logout", action: onLogout)
         }
+        .appAlert(message: $viewModel.errorMessage)
     }
 }

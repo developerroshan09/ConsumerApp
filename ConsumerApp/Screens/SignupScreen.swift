@@ -110,6 +110,7 @@ struct SignupScreen: View {
             .font(.footnote)
         }
         .padding()
+        .appAlert(message: $viewModel.errorMessage)
         .onTapGesture {
             focusField = nil
         }
