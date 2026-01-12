@@ -9,32 +9,77 @@ import SwiftUI
 import FirebaseCore
 import GoogleSignIn
 
+enum Field: Hashable {
+    case email
+    case password
+}
+
 struct LoginScreen: View {
     
     @ObservedObject var viewModel: AuthViewModel
     
     @State private var email = ""
     @State private var password = ""
+    @State private var showEmailError = false
+    @State private var showPasswordError = false
+    
+    @FocusState private var focusField: Field?
     
     let switchToSignup: () -> Void
+    
+    private let minimumPasswordLength = 6
+    private var isFormValid: Bool {
+        email.isValidEmail && password.count >= minimumPasswordLength
+    }
     
     var body: some View {
         VStack(spacing: 24) {
             Spacer()
             
             Text("Welcome Back")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
+                .font(.largeTitle)
+                .fontWeight(.bold)
             
             VStack(spacing: 16) {
-                           TextField("Email", text: $email)
-                               .textFieldStyle(.roundedBorder)
-                               .keyboardType(.emailAddress)
-                               .textInputAutocapitalization(.never)
-
-                           SecureField("Password", text: $password)
-                               .textFieldStyle(.roundedBorder)
-                       }
+                FormTextField(
+                    title: "Email",
+                    text: $email,
+                    keyboardType: .emailAddress,
+                    showError: showEmailError,
+                    errorMessage: "Invalid email address",
+                    isSecure: false,
+                    minimumLength: nil
+                )
+                .focused($focusField, equals: .email)
+                .submitLabel(.next)
+                .onSubmit {
+                    focusField = .password
+                }
+                .onChange(of: email) { value, _ in
+                    showEmailError = !value.isValidEmail && !value.isEmpty
+                }
+                
+                FormTextField(
+                    title: "Password",
+                    text: $password,
+                    keyboardType: .default,
+                    showError: showPasswordError,
+                    errorMessage: "Password must be at least \(minimumPasswordLength) characters",
+                    isSecure: true,
+                    minimumLength: minimumPasswordLength
+                )
+                .focused($focusField, equals: .password)
+                .submitLabel(.go)
+                .onSubmit {
+                    if isFormValid {
+                        viewModel.login(email: email, password: password)
+                        focusField = nil
+                    }
+                }
+                .onChange(of: password) { value, _ in
+                    showPasswordError = !value.isEmpty && value.count < minimumPasswordLength
+                }
+            }
 
             LoadingButton(
                 title: "Login",
@@ -42,6 +87,8 @@ struct LoginScreen: View {
             ) {
                 viewModel.login(email: email, password: password)
             }
+            .disabled(!isFormValid || viewModel.isLoading)
+            .opacity(isFormValid ? 1 : 0.6)
             
             Text("or")
                 .foregroundColor(.gray)
@@ -67,6 +114,9 @@ struct LoginScreen: View {
             .font(.footnote)
         }
         .padding()
+        .onTapGesture {
+            focusField = nil
+        }
     }
 }
 
