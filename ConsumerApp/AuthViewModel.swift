@@ -25,36 +25,49 @@ final class AuthViewModel: ObservableObject {
         withAnimation(.easeInOut) {
             isLoading = true
         }
+
         Task {
             defer {
                 withAnimation(.easeInOut) {
                     isLoading = false
                 }
             }
-            do {
-                let user = try await authComponent.loginUseCase.invoke(email: email, password: password)
+            
+            let result = try await authComponent.loginUseCase.invokeWrapper(email: email, password: password)
+            switch result {
+            case let success as UserResult.Success:
+                let user = success.user
                 print("Login success: \(user.id)")
-            } catch {
-                print("Login failed: \(error)")
+            case let failure as UserResult.Failure:
+                print("Login failed: \(failure.error.message ?? "UNKNOWN")")
+            default:
+                break
             }
         }
     }
+    
 
     func signUp(email: String, password: String) {
         withAnimation(.easeInOut) {
             isLoading = true
         }
+
         Task {
             defer {
                 withAnimation(.easeInOut) {
                     isLoading = false
                 }
             }
-            do {
-                let user = try await authComponent.signUpUseCase.invoke(email: email, password: password)
+            
+            let result = try await authComponent.signUpUseCase.invokeWrapper(email: email, password: password)
+            switch result {
+            case let result as UserResult.Success:
+                let user = result.user
                 print("Signup success: \(user.id)")
-            } catch {
-                print("Signup failed: \(error)")
+            case let failure as UserResult.Failure:
+                print("Signup failed: \(failure.error.message ?? "UNKNOWN")")
+            default:
+                break;
             }
         }
     }
@@ -63,20 +76,23 @@ final class AuthViewModel: ObservableObject {
         withAnimation(.easeInOut) {
             isLoading = true
         }
+
         Task {
             defer {
                 withAnimation(.easeInOut) {
                     isLoading = false
                 }
             }
-            do {
-                let user = try await authComponent.loginWithGoogleUseCase.invoke(idToken: idToken)
-
-                print("✅ Google login success: \(user.id), email: \(user.email ?? "N/A")")
-                // authState will automatically update if your KMM _authState Flow is updated
-
-            } catch {
-                print("❌ Google login failed: \(error)")
+            
+            let result = try await authComponent.loginWithGoogleUseCase.invokeWrapper(idToken: idToken)
+            switch result {
+            case let success as UserResult.Success:
+                let user = success.user
+                print("✅ Google login success: \(user), email: \(user.email ?? "UNKNOWN")")
+            case let failure as UserResult.Failure:
+                print("❌Google login failed: \(failure.error.message ?? "UNKNOWN")")
+            default:
+                break
             }
         }
     }
@@ -85,17 +101,22 @@ final class AuthViewModel: ObservableObject {
         withAnimation(.easeInOut) {
             isLoading = true
         }
+
         Task {
             defer {
                 withAnimation(.easeInOut) {
                     isLoading = false
                 }
             }
-            do {
-                try await authComponent.logoutUseCase.invoke()
+            
+            let result =  try await authComponent.logoutUseCase.invokeWrapper()
+            switch result {
+            case let _ as LogoutResult.Success:
                 print("Logout success: ")
-            } catch {
-                print("Logout failed: \(error)")
+            case let failure as LogoutResult.Failure:
+                print("Logout failed: \(failure.error.message ?? "UNKNOWN")")
+            default:
+                break
             }
         }
     }

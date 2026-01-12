@@ -386,8 +386,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/developerroshan09/kmm-firebase-auth-spm.git";
 			requirement = {
-				kind = exactVersion;
-				version = 1.0.5;
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.6;
 			};
 		};
 		C29C247F2F13E4EB0036FE44 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {

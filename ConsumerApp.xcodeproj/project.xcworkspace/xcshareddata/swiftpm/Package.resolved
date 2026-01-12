@@ -1,5 +1,5 @@
 {
-  "originHash" : "2c63f78c072e92792b2c74b0afc71f37495902c799882510b1f84ec8095a3e17",
+  "originHash" : "aceec2d13bc17952d2735eb8a601faaa4944f550bd11358f322140e1b785c1c0",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/developerroshan09/kmm-firebase-auth-spm.git",
       "state" : {
-        "revision" : "dff48f98a6f76c8b837b16a1da109bf3e59a3978",
-        "version" : "1.0.5"
+        "revision" : "77437105c22091ca465e245981333532bf7f4561",
+        "version" : "1.0.6"
       }
     },
     {
