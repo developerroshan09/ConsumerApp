@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct HomeScreen: View {
     let email: String
     let onLogout: () -> Void
     

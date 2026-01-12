@@ -8,6 +8,7 @@ internal import Combine
 final class AuthViewModel: ObservableObject {
 
     @Published private(set) var authState: AuthState = AuthState.LoggedOut()
+    @Published var isLoading = false
 
     private let authComponent = AuthComponent()
     private var observer: AuthStateObserver?
@@ -21,7 +22,15 @@ final class AuthViewModel: ObservableObject {
     }
 
     func login(email: String, password: String) {
+        withAnimation(.easeInOut) {
+            isLoading = true
+        }
         Task {
+            defer {
+                withAnimation(.easeInOut) {
+                    isLoading = false
+                }
+            }
             do {
                 let user = try await authComponent.loginUseCase.invoke(email: email, password: password)
                 print("Login success: \(user.id)")
@@ -32,7 +41,15 @@ final class AuthViewModel: ObservableObject {
     }
 
     func signUp(email: String, password: String) {
+        withAnimation(.easeInOut) {
+            isLoading = true
+        }
         Task {
+            defer {
+                withAnimation(.easeInOut) {
+                    isLoading = false
+                }
+            }
             do {
                 let user = try await authComponent.signUpUseCase.invoke(email: email, password: password)
                 print("Signup success: \(user.id)")
@@ -43,23 +60,43 @@ final class AuthViewModel: ObservableObject {
     }
 
     func loginWithGoogle(idToken: String) async {
-        do {
-            let user = try await authComponent.loginWithGoogleUseCase.invoke(idToken: idToken)
+        withAnimation(.easeInOut) {
+            isLoading = true
+        }
+        Task {
+            defer {
+                withAnimation(.easeInOut) {
+                    isLoading = false
+                }
+            }
+            do {
+                let user = try await authComponent.loginWithGoogleUseCase.invoke(idToken: idToken)
 
-            print("✅ Google login success: \(user.id), email: \(user.email ?? "N/A")")
-            // authState will automatically update if your KMM _authState Flow is updated
+                print("✅ Google login success: \(user.id), email: \(user.email ?? "N/A")")
+                // authState will automatically update if your KMM _authState Flow is updated
 
-        } catch {
-            print("❌ Google login failed: \(error)")
+            } catch {
+                print("❌ Google login failed: \(error)")
+            }
         }
     }
 
     func logout() async {
-        do {
-            try await authComponent.logoutUseCase.invoke()
-            print("Logout success: ")
-        } catch {
-            print("Logout failed: \(error)")
+        withAnimation(.easeInOut) {
+            isLoading = true
+        }
+        Task {
+            defer {
+                withAnimation(.easeInOut) {
+                    isLoading = false
+                }
+            }
+            do {
+                try await authComponent.logoutUseCase.invoke()
+                print("Logout success: ")
+            } catch {
+                print("Logout failed: \(error)")
+            }
         }
     }
 
